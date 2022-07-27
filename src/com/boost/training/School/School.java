@@ -1,72 +1,59 @@
 package com.boost.training.School;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.Scanner;
 
 public class School {
 
-	StudentManager studentManager = new StudentManager();
-	List<Optional<Student>> studentList = new ArrayList<Optional<Student>>();
+	StudentManager studentManager;
+	List<Student> studentList;
 
-	public static void main(String[] args) {
+	public School() {
+
+		studentList = new ArrayList<Student>();
+		studentManager = new StudentManager();
+	}
+
+	public void addList(Optional<Student>... student) {
+
+		for (int i = 0; i < student.length; i++) {
+
+			if (student[i].isEmpty()) {
+
+				try {
+					throw new Exception_Student("You cannot add null value");
+				} catch (Exception_Student e) {
+					System.out.println(e.getMessage());
+				}
+
+			} else {
+				studentList.add(student[i].get());
+			}
+		}
+	}
+
+	public static void main(String[] args) throws IOException, InterruptedException {
 
 		School school = new School();
+		FileUtils fileUtils = new FileUtils();
+		Optional<Student> student01 = school.studentManager.createStudent();
+		student01.get().setMarks(school.studentManager.controlMark());
+		Optional<Student> student02 = school.studentManager.createStudent();
+		student02.get().setMarks(school.studentManager.controlMark());
+		Optional<Student> student03 = school.studentManager.createStudent();
+		student03.get().setMarks(school.studentManager.controlMark());
 
-		Scanner scanner = new Scanner(System.in);
-		int pick = 0;
-		do {
+		school.addList(student01, student02, student03);
+		// school.studentList.forEach(System.out::println);
 
-			System.out.println("-------------------------------------------------------");
-			System.out.println("in order to add new student press 1, or to exit press 0");
-			System.out.println("-------------------------------------------------------");
-			pick = Integer.parseInt(scanner.nextLine());
-			switch (pick) {
-			case 1 -> {
-				school.addStudent();
-				break;
-			}
-			case 0 -> {
-				school.studentList.forEach(System.out::println);
-			}
-			}
-		} while (pick != 0);
+		fileUtils.writeToFile(fileUtils.file, school.studentList);
+		List<String> readList = fileUtils.readTheFile(fileUtils.file);
+		// System.out.println(readList);
 
-	}
+		school.studentManager.createStudentBy(readList);
 
-	public List<Optional<Student>> addStudent(Optional<Student>... students) {
-
-		List<Optional<Student>> studentList = Arrays.asList(students);
-		Optional<Student> student = studentManager.createStudent();
-
-		if (student.isPresent()) {
-			studentList.add(student);
-		} else {
-			try {
-				throw new Exception_Student("Student cannot be null");
-			} catch (Exception_Student e) {
-				System.out.println(e.getMessage());
-			}
-		}
-		return studentList;
-	}
-
-	public List<Optional<Student>> addStudent() {
-
-		Optional<Student> student = studentManager.createStudent();
-
-		if (student.isPresent()) {
-			studentList.add(student);
-		} else {
-			try {
-				throw new Exception_Student("Student cannot be null");
-			} catch (Exception_Student e) {
-				System.out.println(e.getMessage());
-			}
-		}
-		return studentList;
 	}
 
 }

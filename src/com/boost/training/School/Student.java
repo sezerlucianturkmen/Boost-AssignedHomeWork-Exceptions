@@ -47,6 +47,16 @@ public class Student implements Serializable {
 		this.marks = marks;
 	}
 
+	public String giveMarks(Student student) {
+
+		String markString = "";
+		Double[] marks = student.getMarks();
+		for (Double mark : marks) {
+			markString += "," + mark;
+		}
+		return markString;
+	}
+
 	@Override
 	public String toString() {
 		final int maxLen = 10;
